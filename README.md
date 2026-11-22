@@ -25,4 +25,4 @@ Os checklists e os pesos são de treino e não substituem o checklist oficial da
 
 ## Fotos das estações
 
-As estações com figura mostram uma descrição em texto no lugar da foto. As fotos originais vêm de livro-texto e de slides da disciplina, por isso não estão neste pacote. Para usá-las, crie a pasta `img/`, coloque os arquivos com os nomes que aparecem no campo `img` de cada estação em `stations.js` e troque `window.OSCE_IMAGENS = false` por `true`.
+As estações com figura mostram uma descrição em texto no lugar da foto. As fotos originais vêm de livro-texto e de slides da disciplina, por isso não estão neste repositório. Se a pasta `img/` existir ao lado do `index.html`, com os arquivos nomeados como no campo `img` de cada estação em `stations.js`, o site passa a mostrar as fotos sozinho.

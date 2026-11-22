@@ -127,6 +127,8 @@ const S = {stations:[], cfg:{exec:180, pools:{A:true,B:true,C:true,D:true,E:true
 let rec = null, dictOn = false, tick = null;
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 let micOk = !!SR;
+let HAS_IMG = false;
+(() => { const p = new Image(); p.onload = () => { HAS_IMG = true; }; p.src = "img/d4.jpg"; })();
 const app = document.getElementById("app");
 const homeBtn = document.getElementById("home-btn");
 
@@ -223,8 +225,9 @@ function beginStation(){
 }
 function caseNode(st){
   const kids = st.corpo.map(b => b.t === "ol" ? el("ol", null, b.i.map(x => el("li", {html:x}))) : el("p", {html:b.h}));
-  if (st.img && window.OSCE_IMAGENS) kids.push(el("img", {src:st.img, alt:st.fig || ("Figura da estação " + st.id)}));
-  else if (st.fig) kids.push(el("div", {class:"note"}, el("strong", null, "Figura (descrição): "), st.fig));
+  const figNote = () => el("div", {class:"note"}, el("strong", null, "Figura (descrição): "), st.fig);
+  if (st.img && HAS_IMG){ const im = el("img", {src:st.img, alt:st.fig || ("Figura da estação " + st.id)}); im.addEventListener("error", () => { if (st.fig) im.replaceWith(figNote()); else im.remove(); }); kids.push(im); }
+  else if (st.fig) kids.push(figNote());
   return el("div", {class:"case", style:"display:flex;flex-direction:column;gap:8px"}, kids);
 }
 function renderStation(){
