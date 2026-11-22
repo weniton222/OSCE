@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Treino OSCE Semiotécnica</title>
+<meta name="description" content="Treino de OSCE de Semiotécnica: estações com 1 minuto de leitura, 3 minutos de execução e correção pelo checklist.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: uma coluna de leitura (até 780px); barra do cronômetro fixa no topo durante a estação. */
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#16211f; --muted:#5a6966; --line:#d5dcda;
+  --accent:#0b6b5e; --accent-ink:#ffffff; --accent-soft:#e0efec;
+  --warn:#a85d00; --warn-soft:#fbeed6; --bad:#a8271f; --bad-soft:#f8e2df; --good:#1c6b34; --good-soft:#dff0e3;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101816; --surface:#18221f; --ink:#e7eeec; --muted:#9aaaa6; --line:#2c3a36;
+    --accent:#4fc2ae; --accent-ink:#06211c; --accent-soft:#17352f;
+    --warn:#f0b354; --warn-soft:#3a2c12; --bad:#f08b82; --bad-soft:#3d1c19; --good:#7fd197; --good-soft:#173322;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101816; --surface:#18221f; --ink:#e7eeec; --muted:#9aaaa6; --line:#2c3a36;
+  --accent:#4fc2ae; --accent-ink:#06211c; --accent-soft:#17352f;
+  --warn:#f0b354; --warn-soft:#3a2c12; --bad:#f08b82; --bad-soft:#3d1c19; --good:#7fd197; --good-soft:#173322;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55}
+main{display:flex;flex-direction:column;gap:20px}
+.wrap{max-width:780px;margin:0 auto;padding:20px 16px 64px;display:flex;flex-direction:column;gap:20px}
+header.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:700;font-size:28px;line-height:1.15;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;font-size:20px;margin:0;text-wrap:balance}
+h3{font-family:var(--body);font-weight:600;font-size:15px;margin:0;color:var(--muted);text-transform:none}
+p{margin:0}
+.sub{color:var(--muted);font-size:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1 1 auto}
+button{font:inherit;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 14px;font-weight:500}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.small{padding:5px 10px;font-size:14px}
+.btn:disabled{opacity:.5;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px}
+select{padding:8px 10px}
+textarea{width:100%;min-height:210px;padding:12px;resize:vertical;line-height:1.5}
+textarea:disabled{background:var(--bg);color:var(--muted)}
+label.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px;cursor:pointer;background:var(--surface)}
+label.chip input{accent-color:var(--accent)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.neutral{background:var(--accent-soft);color:var(--accent)}
+.list{display:flex;flex-direction:column}
+.st{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.st:first-child{border-top:0}
+.st .id{font-family:var(--mono);font-size:13px;color:var(--muted);min-width:52px}
+.st .name{flex:1 1 auto;min-width:0}
+.bar{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.bar .line1{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.phase{font-family:var(--display);font-weight:700;font-size:18px}
+.clock{font-family:var(--mono);font-size:34px;font-variant-numeric:tabular-nums;line-height:1}
+.clock.warn{color:var(--warn)} .clock.bad{color:var(--bad)}
+.track{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.track > i{display:block;height:100%;width:0;background:var(--accent)}
+.track.read > i{background:var(--warn)}
+.case p + p{margin-top:8px}
+.case ol{margin:6px 0 0;padding-left:22px}
+.case li + li{margin-top:4px}
+.case img{max-width:100%;border-radius:8px;border:1px solid var(--line);align-self:flex-start}
+.score{font-family:var(--display);font-weight:700;font-size:44px;line-height:1}
+.score small{font-size:18px;color:var(--muted);font-weight:500}
+.item{display:grid;grid-template-columns:1fr auto;gap:6px 12px;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .txt{min-width:0}
+.item .cm{color:var(--muted);font-size:14px;margin-top:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;align-self:start}
+.seg button{border:0;background:var(--surface);color:var(--muted);padding:5px 9px;font-size:13px;font-weight:600}
+.seg button + button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"].s2{background:var(--good-soft);color:var(--good)}
+.seg button[aria-pressed="true"].s1{background:var(--warn-soft);color:var(--warn)}
+.seg button[aria-pressed="true"].s0{background:var(--bad-soft);color:var(--bad)}
+.pts{font-family:var(--mono);font-size:13px;color:var(--muted);text-align:right}
+.note{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:14px}
+.note.bad{background:var(--bad-soft)} .note.warn{background:var(--warn-soft)}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-weight:600}
+details > div{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.answer{white-space:pre-wrap;background:var(--bg);border-radius:8px;padding:10px 12px;font-size:15px}
+ul.plain{margin:0;padding-left:20px}
+.partial{min-height:1.4em;color:var(--muted);font-size:14px;font-style:italic}
+@media (max-width:480px){.clock{font-size:28px}.item{grid-template-columns:1fr}.pts{text-align:left}}
+@media (prefers-reduced-motion:no-preference){.track > i{transition:width .25s linear}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Treino OSCE Semiotécnica</h1>
+      <p class="sub">Leia o caso, responda no tempo da prova e veja a correção pelo checklist.</p>
+    </div>
+    <button class="btn small" id="home-btn" type="button" hidden>Voltar ao início</button>
+  </header>
+  <main id="app"><div class="card"><p>Carregando as estações…</p></div></main>
+  <footer class="sub">Material de estudo para o OSCE de Semiotécnica I. Os checklists e os pesos são de treino e não substituem o checklist oficial da disciplina.</footer>
+</div>
+<script src="stations.js"></script>
+<script>
+"use strict";
+const READ_SECONDS = 60;
+const SIM_LABEL = {A:"Simulado A", B:"Simulado B", C:"Simulado C", D:"Simulado D", E:"Simulado E", F:"Simulado F"};
+const SIM_ORIGIN = {A:"elaborado para treino", B:"elaborado para treino", C:"slides da disciplina", D:"estações de 20/11", E:"simulado 2026/2, checklist oficial", F:"revisão dos monitores"};
+const S = {stations:[], cfg:{exec:180, pools:{A:true,B:true,C:true,D:true,E:true,F:true}}, hist:[], run:null};
+let rec = null, dictOn = false, tick = null;
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+let micOk = !!SR;
+const app = document.getElementById("app");
+const homeBtn = document.getElementById("home-btn");
+
+function el(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v === false || v == null) continue;
+    if (k === "class") n.className = v;
+    else if (k === "html") n.innerHTML = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v === true) n.setAttribute(k, "");
+    else n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()){
+    if (c == null || c === false) continue;
+    n.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return n;
+}
+function fmt(sec){ sec = Math.max(0, Math.round(sec)); return Math.floor(sec/60) + ":" + String(sec%60).padStart(2,"0"); }
+function nota(n){ return (Math.round(n*10)/10).toLocaleString("pt-BR", {minimumFractionDigits:1, maximumFractionDigits:1}); }
+function load(){
+  try{
+    const c = JSON.parse(localStorage.getItem("osce-treino-cfg") || "null"); if (c && c.pools) S.cfg = c;
+    const h = JSON.parse(localStorage.getItem("osce-treino-hist") || "null"); if (Array.isArray(h)) S.hist = h;
+  }catch(e){}
+}
+function save(){
+  try{
+    localStorage.setItem("osce-treino-cfg", JSON.stringify(S.cfg));
+    localStorage.setItem("osce-treino-hist", JSON.stringify(S.hist.slice(-400)));
+  }catch(e){}
+}
+function best(id){ let b = null; for (const h of S.hist) if (h.id === id && (b === null || h.nota > b)) b = h.nota; return b; }
+function scoreOf(st, marks){ return st.checklist.reduce((a, c, i) => a + c.pts * (marks[i] === 2 ? 1 : marks[i] === 1 ? 0.5 : 0), 0); }
+function resumo(s){
+  const p = s.corpo.find(b => b.t === "p"); let t = p ? p.h.replace(/<strong>.*?<\/strong>/, "").replace(/<[^>]+>/g, "").trim() : "";
+  if (!t){ const o = s.corpo.find(b => b.t === "ol"); t = o ? o.i[0].replace(/<[^>]+>/g, "") : s.titulo; }
+  const d = document.createElement("textarea"); d.innerHTML = t; t = d.value;
+  return t.length > 78 ? t.slice(0, 76).replace(/\s+\S*$/, "") + "…" : t;
+}
+function pillFor(n){ return n >= 7 ? "good" : n >= 5 ? "warn" : "bad"; }
+
+/* ---------- início ---------- */
+function renderHome(){
+  stopTimer(); S.run = null; homeBtn.hidden = true;
+  const done = S.hist.length;
+  const avg = done ? S.hist.reduce((a,h) => a + h.nota, 0) / done : null;
+  const execSel = el("select", {id:"exec-time", onchange:e => { S.cfg.exec = Number(e.target.value); save(); }},
+    [[180,"3 minutos (tempo da prova)"],[300,"5 minutos (para quem digita devagar)"],[0,"Sem limite"]].map(([v,t]) => el("option", {value:v, selected: S.cfg.exec === v}, t)));
+  const chips = Object.keys(SIM_LABEL).map(k => el("label", {class:"chip", title:SIM_ORIGIN[k]},
+    el("input", {type:"checkbox", id:"pool-"+k, checked:S.cfg.pools[k], onchange:e => { S.cfg.pools[k] = e.target.checked; save(); }}), SIM_LABEL[k].replace("Simulado ","") + " · " + SIM_ORIGIN[k]));
+  const exam = el("section", {class:"card"},
+    el("h2", null, "Simular a prova"),
+    el("p", null, "Duas estações sorteadas. Em cada uma, 1 minuto para ler o caso e depois o tempo de execução para responder."),
+    el("div", {class:"row"}, el("label", {for:"exec-time", class:"sub"}, "Tempo de execução"), execSel),
+    el("div", null, el("h3", null, "Sortear entre"), el("div", {class:"row", style:"margin-top:8px"}, chips)),
+    el("div", {class:"row"}, el("button", {class:"btn primary", type:"button", onclick:startExam}, "Começar a prova"),
+      done ? el("span", {class:"sub"}, done + (done === 1 ? " estação feita" : " estações feitas") + ", média " + nota(avg)) : null));
+  const how = el("section", {class:"card"},
+    el("h2", null, "Como responder"),
+    el("p", null, "Escreva ou dite o que você faria e diria na estação, na ordem, como se narrasse ao examinador: a abertura, a técnica de cada manobra, o achado esperado e a resposta às perguntas."),
+    el("p", {class:"sub"}, "Ao entregar, o checklist da estação aparece e você marca o que fez, fez em parte ou não fez. A nota sai na hora. Para uma segunda opinião, um botão copia o caso, o checklist e a sua resposta para você colar em um assistente de IA."));
+  const groups = Object.keys(SIM_LABEL).map(k => {
+    const rows = S.stations.filter(s => s.sim === k).map(s => {
+      const b = best(s.id);
+      return el("div", {class:"st"}, el("span", {class:"id"}, s.id), el("span", {class:"name"}, resumo(s)),
+        b !== null ? el("span", {class:"pill " + pillFor(b)}, nota(b)) : null,
+        el("button", {class:"btn small", type:"button", onclick:() => startRun([s], false)}, "Treinar"));
+    });
+    return el("div", null, el("h3", null, SIM_LABEL[k] + " · " + SIM_ORIGIN[k]), el("div", {class:"list", style:"margin-top:4px"}, rows));
+  });
+  const free = el("section", {class:"card"}, el("h2", null, "Treinar uma estação"),
+    el("p", {class:"sub"}, "A nota ao lado é a sua melhor em cada estação."), groups);
+  app.replaceChildren(exam, how, free);
+}
+function startExam(){
+  const pool = S.stations.filter(s => S.cfg.pools[s.sim]);
+  if (pool.length < 2){ app.prepend(el("div", {class:"note bad"}, "Marque simulados com pelo menos duas estações para sortear.")); return; }
+  const a = pool.splice(Math.floor(Math.random()*pool.length), 1)[0];
+  const b = pool[Math.floor(Math.random()*pool.length)];
+  startRun([a, b], true);
+}
+function startRun(queue, exam){
+  S.run = {queue, exam, i:0, results:[]};
+  beginStation();
+}
+
+/* ---------- estação ---------- */
+function beginStation(){
+  const r = S.run; r.phase = "read"; r.answer = ""; r.end = Date.now() + READ_SECONDS*1000; r.t0 = 0;
+  renderStation(); startTimer(); window.scrollTo(0,0);
+}
+function caseNode(st){
+  const kids = st.corpo.map(b => b.t === "ol" ? el("ol", null, b.i.map(x => el("li", {html:x}))) : el("p", {html:b.h}));
+  if (st.img && window.OSCE_IMAGENS) kids.push(el("img", {src:st.img, alt:st.fig || ("Figura da estação " + st.id)}));
+  else if (st.fig) kids.push(el("div", {class:"note"}, el("strong", null, "Figura (descrição): "), st.fig));
+  return el("div", {class:"case", style:"display:flex;flex-direction:column;gap:8px"}, kids);
+}
+function renderStation(){
+  const r = S.run, st = r.queue[r.i]; homeBtn.hidden = false;
+  const reading = r.phase === "read";
+  const bar = el("div", {class:"bar"},
+    el("div", {class:"line1"},
+      el("span", {class:"phase", id:"phase"}, reading ? "Leitura" : "Execução"),
+      el("span", {class:"sub"}, (r.exam ? "Estação " + (r.i+1) + " de " + r.queue.length + " · " : "") + st.id),
+      el("span", {class:"grow"}),
+      el("span", {class:"clock", id:"clock", "aria-live":"off"}, reading ? fmt(READ_SECONDS) : (S.cfg.exec ? fmt(S.cfg.exec) : "0:00")),
+      reading ? el("button", {class:"btn", type:"button", onclick:toExec}, "Começar a execução")
+              : el("button", {class:"btn primary", type:"button", onclick:() => finish(false)}, "Entregar")),
+    el("div", {class:"track" + (reading ? " read" : ""), id:"track"}, el("i", {id:"fill"})));
+  const card = el("section", {class:"card"}, el("h2", null, st.titulo), caseNode(st));
+  const ta = el("textarea", {id:"answer", disabled:reading, placeholder: reading ? "A resposta abre quando a leitura terminar." : "Narre o que você faz e diz, na ordem. Ex.: Apresento-me, higienizo as mãos, explico o exame…",
+    oninput:e => { r.answer = e.target.value; }});
+  ta.value = r.answer;
+  const mic = (!reading && micOk) ? el("button", {class:"btn small", id:"mic", type:"button", onclick:toggleMic}, dictOn ? "Parar o ditado" : "Ditar a resposta") : null;
+  const ans = el("section", {class:"card"},
+    el("div", {class:"row"}, el("label", {for:"answer"}, el("h2", null, "Sua resposta")), el("span", {class:"grow"}), mic),
+    ta, el("div", {class:"partial", id:"partial"}));
+  app.replaceChildren(bar, card, ans);
+  if (!reading) ta.focus();
+}
+function startTimer(){ stopTimer(); tick = setInterval(onTick, 250); onTick(); }
+function stopTimer(){ if (tick){ clearInterval(tick); tick = null; } }
+function onTick(){
+  const r = S.run; if (!r) return stopTimer();
+  const clock = document.getElementById("clock"), fill = document.getElementById("fill"); if (!clock) return;
+  if (r.phase === "read"){
+    const left = (r.end - Date.now())/1000;
+    clock.textContent = fmt(left); fill.style.width = Math.min(100, (1 - left/READ_SECONDS)*100) + "%";
+    if (left <= 0) toExec();
+  } else if (r.phase === "exec"){
+    if (S.cfg.exec){
+      const left = (r.end - Date.now())/1000;
+      clock.textContent = fmt(left); fill.style.width = Math.min(100, (1 - left/S.cfg.exec)*100) + "%";
+      clock.className = "clock" + (left <= 15 ? " bad" : left <= 45 ? " warn" : "");
+      if (left <= 0) finish(true);
+    } else {
+      clock.textContent = fmt((Date.now() - r.t0)/1000);
+    }
+  }
+}
+function toExec(){
+  const r = S.run; if (!r || r.phase !== "read") return;
+  r.phase = "exec"; r.t0 = Date.now(); r.end = r.t0 + S.cfg.exec*1000;
+  renderStation(); onTick();
+}
+function setMic(on){
+  dictOn = on; const m = document.getElementById("mic"); if (m) m.textContent = on ? "Parar o ditado" : "Ditar a resposta";
+  if (!on){ const p = document.getElementById("partial"); if (p) p.textContent = ""; }
+}
+function stopMic(){
+  const r0 = rec; rec = null;
+  const p = document.getElementById("partial"); const pend = p ? p.textContent.trim() : "";
+  if (r0){ try{ r0.onend = null; r0.onresult = null; r0.stop(); }catch(e){} if (pend) appendDictated(pend); }
+  setMic(false);
+}
+function toggleMic(){
+  if (!micOk) return;
+  if (dictOn){ stopMic(); return; }
+  try{
+    const x = new SR(); x.lang = "pt-BR"; x.continuous = true; x.interimResults = true;
+    x.onresult = e => {
+      let parcial = "";
+      for (let i = e.resultIndex; i < e.results.length; i++){ const t = e.results[i][0].transcript; if (e.results[i].isFinal) appendDictated(t); else parcial += t; }
+      const p = document.getElementById("partial"); if (p) p.textContent = parcial;
+    };
+    x.onerror = e => { if (e.error === "not-allowed" || e.error === "service-not-allowed"){ micOk = false; stopMic(); const m = document.getElementById("mic"); if (m) m.remove(); } };
+    x.onend = () => { if (rec !== x) return; if (S.run && S.run.phase === "exec"){ try{ x.start(); }catch(e){ stopMic(); } } else stopMic(); };
+    rec = x; x.start(); setMic(true);
+  }catch(e){ micOk = false; stopMic(); }
+}
+function appendDictated(text){
+  const r = S.run; if (!r || r.phase !== "exec" || !text) return;
+  r.answer = (r.answer ? r.answer.replace(/\s*$/, " ") : "") + text.trim();
+  const ta = document.getElementById("answer"); if (ta) ta.value = r.answer;
+}
+async function finish(timeUp){
+  const r = S.run; if (!r || r.phase !== "exec") return;
+  stopMic();
+  r.phase = "review"; stopTimer();
+  const ta = document.getElementById("answer"); if (ta){ ta.disabled = true; r.answer = ta.value; }
+  const st = r.queue[r.i];
+  r.cur = {st, answer:r.answer.trim(), timeUp, used: Math.round((Date.now() - r.t0)/1000), marks: st.checklist.map(() => 0), comments: st.checklist.map(() => ""), erros:[], dica:"", status:"idle", saved:false};
+  r.cur.status = r.cur.answer ? "manual" : "empty"; renderReview();
+  window.scrollTo(0,0);
+}
+
+/* ---------- correção ---------- */
+function buildPrompt(c){
+  const st = c.st, strip = h => { const d = document.createElement("textarea"); d.innerHTML = h.replace(/<[^>]+>/g, ""); return d.value; };
+  const caso = st.corpo.map(b => b.t === "ol" ? b.i.map((x,i) => (i+1) + ". " + strip(x)).join("\n") : strip(b.h)).join("\n");
+  const chk = st.checklist.map((x,i) => (i+1) + ". " + x.item + " (" + nota(x.pts) + " pt)").join("\n");
+  return [
+    "Você é examinador de um OSCE de Semiotécnica do 2º período de Medicina. Corrija a resposta do aluno usando somente o checklist abaixo.",
+    "O aluno descreve por escrito o que faria e diria na estação; não há paciente real. Descrever corretamente a manobra conta como realizá-la.",
+    "O item Moldura significa: cumprimentar e apresentar-se, higienizar as mãos, explicar o exame e pedir licença, examinar dos dois lados.",
+    "Para cada item do checklist, diga se o aluno fez (pontuação cheia), fez em parte (metade) ou não fez (zero), com um comentário curto. Depois dê a nota de 0 a 10, liste as afirmações erradas e termine com uma dica para a próxima tentativa.",
+    "", "ESTAÇÃO " + st.id, caso, st.fig ? "Figura (descrição): " + st.fig : "",
+    "", "CHECKLIST", chk,
+    st.notas.length ? "\nOBSERVAÇÕES DO GABARITO\n" + st.notas.map(strip).join("\n") : "",
+    "", "RESPOSTA DO ALUNO", '"""', c.answer, '"""'
+  ].join("\n");
+}
+function copyPrompt(c, btn){
+  const text = buildPrompt(c);
+  const fallback = () => { c.showPrompt = true; renderReview(); };
+  try{
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => { btn.textContent = "Copiado"; setTimeout(() => { btn.textContent = "Copiar para corrigir com IA"; }, 2000); }, fallback);
+    else fallback();
+  }catch(e){ fallback(); }
+}
+function record(c){
+  const n = scoreOf(c.st, c.marks);
+  if (c.saved) { const h = S.hist[c.hi]; if (h) h.nota = n; }
+  else { c.hi = S.hist.push({id:c.st.id, nota:n, ts:Date.now()}) - 1; c.saved = true; }
+  save();
+}
+function renderReview(){
+  const r = S.run, c = r.cur, st = c.st; homeBtn.hidden = false;
+  const grading = c.status === "grading";
+  const n = scoreOf(st, c.marks);
+  const head = el("section", {class:"card"},
+    el("div", {class:"row"},
+      el("div", {class:"grow"}, el("h2", null, st.titulo.split(":")[0] + (st.tema ? ": " + st.tema : "")), el("p", {class:"sub"}, st.origem)),
+      grading ? el("span", {class:"pill neutral"}, "Corrigindo…") : el("div", {class:"score", id:"score"}, nota(n), el("small", null, " / 10"))),
+    c.timeUp ? el("div", {class:"note warn"}, "O tempo acabou e a resposta foi entregue como estava.") : null,
+    c.status === "empty" ? el("div", {class:"note warn"}, "Você não escreveu resposta. Veja abaixo o que o checklist esperava.") : null,
+    c.status === "manual" ? el("div", {class:"note"}, "Marque em cada item se você fez, fez em parte ou não fez. A nota é calculada na hora.") : null,
+    null);
+  const items = st.checklist.map((x, i) => {
+    const seg = el("div", {class:"seg", role:"group", "aria-label":"Avaliação do item " + (i+1)},
+      [[0,"Não fez","s0"],[1,"Parcial","s1"],[2,"Fez","s2"]].map(([v,t,cl]) => el("button", {type:"button", class:cl, "aria-pressed": String(c.marks[i] === v), disabled:grading,
+        onclick:() => { c.marks[i] = v; record(c); renderReview(); }}, t)));
+    const got = x.pts * (c.marks[i] === 2 ? 1 : c.marks[i] === 1 ? 0.5 : 0);
+    return el("div", {class:"item"},
+      el("div", {class:"txt"}, el("div", null, x.item), c.comments[i] ? el("div", {class:"cm"}, c.comments[i]) : null),
+      el("div", {style:"display:flex;flex-direction:column;gap:4px;align-items:flex-end"}, seg, el("div", {class:"pts"}, nota(got) + " de " + nota(x.pts))));
+  });
+  const chk = el("section", {class:"card"}, el("h2", null, "Checklist"),
+    c.answer ? el("div", {class:"row"}, el("button", {class:"btn small", type:"button", onclick:e => copyPrompt(c, e.currentTarget)}, "Copiar para corrigir com IA"), el("span", {class:"sub"}, "Copia o caso, o checklist e a sua resposta.")) : null,
+    c.showPrompt ? (() => { const t = el("textarea", {readonly:true, "aria-label":"Texto para copiar e colar em um assistente"}); t.value = buildPrompt(c); return t; })() : null,
+    el("div", null, items),
+    st.notas.length ? el("details", null, el("summary", null, "Observações do gabarito"), el("div", null, st.notas.map(h => el("p", {html:h})))) : null,
+    st.instrucao ? el("details", null, el("summary", null, "Instrução para quem faz o paciente"), el("div", null, el("p", null, st.instrucao))) : null,
+    el("details", null, el("summary", null, "Sua resposta e o caso"), el("div", null, el("div", {class:"answer"}, c.answer || "(sem resposta)"), caseNode(st))));
+  const last = r.i >= r.queue.length - 1;
+  const nav = el("div", {class:"row"},
+    !last ? el("button", {class:"btn primary", type:"button", disabled:grading, onclick:nextStation}, "Próxima estação") : null,
+    last && r.exam ? el("button", {class:"btn primary", type:"button", disabled:grading, onclick:finishExam}, "Ver o resultado da prova") : null,
+    last && !r.exam ? el("button", {class:"btn primary", type:"button", disabled:grading, onclick:() => { commit(); startRun([st], false); }}, "Refazer esta estação") : null,
+    last && !r.exam ? el("button", {class:"btn", type:"button", disabled:grading, onclick:() => { commit(); renderHome(); }}, "Escolher outra") : null);
+  app.replaceChildren(head, chk, nav);
+  if (!grading && c.status !== "idle") record(c);
+}
+function commit(){ const r = S.run; if (r && r.cur){ record(r.cur); if (!r.results.includes(r.cur)) r.results.push(r.cur); } }
+function nextStation(){ commit(); const r = S.run; r.i++; r.cur = null; beginStation(); }
+function finishExam(){
+  commit(); const r = S.run; homeBtn.hidden = false;
+  const notas = r.results.map(c => scoreOf(c.st, c.marks));
+  const media = notas.reduce((a,b) => a + b, 0) / notas.length;
+  const rows = r.results.map((c, i) => el("div", {class:"st"}, el("span", {class:"id"}, c.st.id),
+    el("span", {class:"name"}, c.st.titulo.split(":")[0] + (c.st.tema ? ": " + c.st.tema : "")), el("span", {class:"pill " + pillFor(notas[i])}, nota(notas[i]))));
+  app.replaceChildren(el("section", {class:"card"},
+    el("h2", null, "Resultado da prova"),
+    el("div", {class:"score"}, nota(media), el("small", null, " média de 10")),
+    el("div", {class:"list"}, rows),
+    el("div", {class:"row"}, el("button", {class:"btn primary", type:"button", onclick:startExam}, "Fazer outra prova"),
+      el("button", {class:"btn", type:"button", onclick:renderHome}, "Voltar ao início"))));
+  S.run = null; window.scrollTo(0,0);
+}
+
+homeBtn.addEventListener("click", () => { if (S.run && S.run.cur && S.run.phase === "review") commit(); stopMic(); renderHome(); });
+load();
+if (Array.isArray(window.OSCE_STATIONS) && window.OSCE_STATIONS.length){ S.stations = window.OSCE_STATIONS; renderHome(); }
+else app.replaceChildren(el("div", {class:"card"}, el("p", null, "Não foi possível carregar as estações. Confira se o arquivo stations.js está na mesma pasta do index.html.")));
+</script>
+</body>
+</html>
